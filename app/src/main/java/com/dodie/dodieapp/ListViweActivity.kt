@@ -89,6 +89,7 @@ class ListViweActivity : ComponentActivity() {
                     }
                 }
                 LaunchedEffect(lazyPagingItems) {
+                    println("Refreshing data")
                     lazyPagingItems.refresh()
                 }
 
@@ -159,7 +160,10 @@ class ListViweActivity : ComponentActivity() {
                                 onValueChange = { newQuery ->
                                     searchQuery = newQuery
                                     // Update the search query in the ViewModel
+
                                     listViewModel.setSearchQuery(newQuery)
+                                    lazyPagingItems.refresh()
+
                                 },
                                 placeholder = { Text("Search") },
                                 modifier = Modifier

@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListViewModel(application: Application) : ViewModel() {
@@ -51,11 +53,15 @@ class ListViewModel(application: Application) : ViewModel() {
                 // Use the current time stamp
                 val currentTime = System.currentTimeMillis()
                 itemDao.insertItem(ItemEntity(title = title, date = currentTime, description = description))
-                _itemState.value = itemStateFlow.value.copy(isLoading = false, error = null, isSaved = true)
+                _itemState.update {
+                    it.copy(isLoading = false, isSaved = true)
+                }
                 // Trigger a data refresh after inserting an item
                 refreshData()
             } catch (e: Exception) {
-                _itemState.value = itemStateFlow.value.copy(isLoading = false, error = e.message)
+                _itemState.update {
+                    it.copy(isLoading = false, error = e.message)
+                }
             }
         }
     }
